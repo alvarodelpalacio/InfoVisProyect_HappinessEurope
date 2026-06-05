@@ -12,13 +12,13 @@ function EuropeMap({ data, selectedFactor, selectedCountry, onSelectCountry }) {
       svg.selectAll("*").remove()
 
       const width = 800
-      const height = 750
+      const height = 1000
 
       svg.attr("width", width).attr("height", height)
 
       const projection = d3.geoMercator()
-        .center([18, 54])
-        .scale(500)
+        .center([8, 55])
+        .scale(650)
         .translate([width / 2, height / 2 - 60])
 
       const pathGenerator = d3.geoPath().projection(projection)
