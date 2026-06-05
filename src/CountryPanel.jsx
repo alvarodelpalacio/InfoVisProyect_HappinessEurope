@@ -25,6 +25,8 @@ function CountryPanel({
           })
           .sort((a, b) => a.distance - b.distance)[0]?.country
       : null
+
+      
   
     return (
         <aside className="side-panel">
@@ -89,6 +91,11 @@ function CountryPanel({
               <span>Most similar country</span>
               <strong>{mostSimilarCountry}</strong>
             </div>
+            
+            <div className="divider"></div>
+
+            
+               
           </>
         )}
       </aside>

@@ -4,6 +4,7 @@ import "./App.css"
 import * as d3 from "d3"
 import ScatterPlot from "./ScatterPlot"
 import CountryPanel from "./CountryPanel"
+import KeyInsights from "./KeyInsights"
 
 
 const factors = [
@@ -113,13 +114,20 @@ function App() {
             />
           </div>
 
-          <CountryPanel
-          data={data}
-          factors={factors}
-          selectedCountry={selectedCountry}
-          selectedFactor={selectedFactor}
-          getFactorColor={getFactorColor}
-        />
+          <div className="right-column">
+            <CountryPanel
+              data={data}
+              factors={factors}
+              selectedCountry={selectedCountry}
+              selectedFactor={selectedFactor}
+              getFactorColor={getFactorColor}
+            />
+
+            <KeyInsights
+              data={data}
+              selectedFactor={selectedFactor}
+            />
+          </div>
 
         
       </section>
