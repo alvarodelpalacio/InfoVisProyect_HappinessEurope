@@ -350,3 +350,70 @@ svg {
   flex: 1;
   min-height: 0;
 }
+
+.scatter-card {
+  margin-top: 22px;
+  background: rgba(255, 252, 245, 0.9);
+  border: 1px solid rgba(24, 51, 47, 0.08);
+  border-radius: 28px;
+  padding: 20px;
+  box-shadow: 0 18px 40px rgba(38, 54, 49, 0.08);
+}
+
+.scatter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.scatter-header h2 {
+  margin: 0;
+  color: #18332f;
+}
+
+.scatter-header p {
+  margin: 4px 0 0;
+  color: #60706c;
+}
+
+.tooltip-box {
+  background: #fffaf1;
+  border: 1px solid rgba(24, 51, 47, 0.12);
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 10px 30px rgba(38, 54, 49, 0.12);
+}
+
+.tooltip-box p {
+  margin: 4px 0 0;
+  color: #60706c;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.recharts-wrapper:focus,
+.recharts-surface:focus {
+  outline: none;
+} 
+
+.recharts-wrapper,
+.recharts-wrapper:focus,
+.recharts-wrapper:focus-visible,
+.recharts-surface,
+.recharts-surface:focus,
+.recharts-surface:focus-visible,
+.recharts-layer,
+.recharts-layer:focus,
+.recharts-layer:focus-visible {
+  outline: none !important;
+}
+
+.scatter-card *:focus,
+.scatter-card *:focus-visible {
+  outline: none !important;
+}

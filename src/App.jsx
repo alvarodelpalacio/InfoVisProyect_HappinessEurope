@@ -2,6 +2,9 @@ import { useEffect, useState } from "react"
 import EuropeMap from "./EuropeMap"
 import "./App.css"
 import * as d3 from "d3"
+import ScatterPlot from "./ScatterPlot"
+import CountryPanel from "./CountryPanel"
+
 
 const factors = [
   { label: "Purchasing Power", key: "local_pursch_power", description: "Shows how much people can afford with local incomes." },
@@ -32,25 +35,28 @@ function App() {
       })
   }, [])
 
-  const happiness = selectedCountry?.["Life evaluation (3-year average)"]
+  const getFactorColor = (factor, value) => {
+    if (!data.length || value === undefined || Number.isNaN(value)) return "#b8c2b2"
+  
+    const values = data
+      .map(d => d[factor.key])
+      .filter(v => v !== undefined && !Number.isNaN(v))
+  
+    const min = Math.min(...values)
+    const max = Math.max(...values)
+  
+    const t = (value - min) / (max - min)
+  
+    const low = [231, 154, 118]
+    const high = [105, 184, 156]
+  
+    const r = Math.round(low[0] + t * (high[0] - low[0]))
+    const g = Math.round(low[1] + t * (high[1] - low[1]))
+    const b = Math.round(low[2] + t * (high[2] - low[2]))
+  
+    return `rgb(${r}, ${g}, ${b})`
+  }
 
-  const mainDriver = selectedCountry
-    ? factors
-        .filter(f => f.key !== "local_pursch_power")
-        .sort((a, b) => selectedCountry[b.key] - selectedCountry[a.key])[0]
-    : null
-
-  const mostSimilarCountry = selectedCountry && data.length
-    ? data
-        .filter(d => d.COUNTRY !== selectedCountry.COUNTRY)
-        .map(d => {
-          const distance = factors.reduce((sum, f) => {
-            return sum + Math.abs((d[f.key] ?? 0) - (selectedCountry[f.key] ?? 0))
-          }, 0)
-          return { country: d.COUNTRY, distance }
-        })
-        .sort((a, b) => a.distance - b.distance)[0]?.country
-    : null
 
   return (
     <main className="app">
@@ -83,95 +89,39 @@ function App() {
       </section>
 
       <section className="dashboard-grid">
-        <div className="map-card">
-          <div className="card-header">
-            <div className="legend-note">
-              Low <span className="gradient-bar"></span> High
+      <div className="left-column">
+            <div className="map-card">
+              <div className="card-header">
+                <div className="legend-note">
+                  Low <span className="gradient-bar"></span> High
+                </div>
+              </div>
+
+              <EuropeMap
+                data={data}
+                selectedFactor={selectedFactor}
+                selectedCountry={selectedCountry}
+                onSelectCountry={setSelectedCountry}
+              />
             </div>
+
+            <ScatterPlot
+              data={data}
+              selectedFactor={selectedFactor}
+              selectedCountry={selectedCountry}
+              onSelectCountry={setSelectedCountry}
+            />
           </div>
 
-          <EuropeMap
-            data={data}
-            selectedFactor={selectedFactor}
-            selectedCountry={selectedCountry}
-            onSelectCountry={setSelectedCountry}
-          />
-        </div>
+          <CountryPanel
+          data={data}
+          factors={factors}
+          selectedCountry={selectedCountry}
+          selectedFactor={selectedFactor}
+          getFactorColor={getFactorColor}
+        />
 
-        <aside className="side-panel">
-          <h2>Country Details</h2>
-
-          {!selectedCountry ? (
-            <p className="muted">Click a country on the map to see details.</p>
-          ) : (
-            <>
-              <div className="country-header">
-                <div className="face-icon">
-                  {happiness >= 7 ? "😊" : happiness >= 6 ? "🙂" : happiness >= 5 ? "😐" : "☹️"}
-                </div>
-
-                <div>
-                  <h3>{selectedCountry.COUNTRY}</h3>
-                  <div className="score">{happiness.toFixed(2)}</div>
-                  <div className="score-label">Happiness score</div>
-                </div>
-              </div>
-
-              <div className="divider"></div>
-
-              <h3 className="section-title">Contributing factors</h3>
-
-              <div className="factor-list">
-                {factors.map(factor => {
-                  const value = selectedCountry[factor.key]
-                  const max = Math.max(...data.map(d => d[factor.key] || 0))
-                  const percentage = max ? (value / max) * 100 : 0
-
-                  const getFactorColor = (factor, value) => {
-                    if (!data.length || value === undefined || Number.isNaN(value)) return "#b8c2b2"
-                  
-                    const extent = d3.extent(data, d => d[factor.key])
-                    const colorScale = d3.scaleLinear()
-                      .domain(extent)
-                      .range(["#e79a76", "#69b89c"])
-                  
-                    return colorScale(value)
-                  }
-
-                  return (
-                    <div className="factor-row" key={factor.key}>
-                      <div className="factor-label">
-                        <span>{factor.label}</span>
-                        <span>{value?.toFixed(2)}</span>
-                      </div>
-                      <div className="bar-bg">
-                        <div
-                          className="bar-fill"
-                          style={{
-                            width: `${percentage}%`,
-                            background: getFactorColor(factor, value)
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-
-              <div className="divider"></div>
-
-              <div className="detail-block">
-                <span>Main happiness driver</span>
-                <strong>{mainDriver?.label}</strong>
-              </div>
-
-              <div className="detail-block">
-                <span>Most similar country</span>
-                <strong>{mostSimilarCountry}</strong>
-              </div>
-            </>
-          )}
-        </aside>
+        
       </section>
     </main>
   )
